@@ -34,6 +34,9 @@
         <template v-if="menu==11">
             <usuarios-component></usuarios-component>
         </template>
+        <template v-if="menu==12">
+            <coordinador-component></coordinador-component>
+        </template>
         
     </v-app> 
 @endsection

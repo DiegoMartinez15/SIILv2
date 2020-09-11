@@ -6,19 +6,19 @@
       </v-overlay>
       <v-card>
         <v-card-title>
-          Listado de Usuarios
+          Listado de Coordinadores
           <div class="flex-grow-1"></div>
-          <v-text-field v-model="searchUsuario" label="Buscar Usuarios" hide-details></v-text-field>
+          <v-text-field v-model="searchCoordinador" label="Buscar Cordinadores" hide-details></v-text-field>
         </v-card-title>
         <v-data-table
-          :headers="hTBUsuarios"
-          :items="arrayUsuarios"
+          :headers="hTBCoordinadores"
+          :items="arrayCoordinadores"
           :footer-props="{
             'items-per-page-options': [5,10, 20, 30,40],
             'items-per-page-text' : 'Registros Por Página'
           }"
           :items-per-page="5"
-          :search="searchUsuario"
+          :search="searchCoordinador"
           multi-sort
           class="elevation-1"
         >
@@ -27,7 +27,7 @@
           <template v-slot:top>
             <v-toolbar flat color="white">
               <div class="flex-grow-1"></div>
-              <v-dialog v-model="modalUsuario" persistent max-width="700px">
+              <v-dialog v-model="modalCoordinador" persistent max-width="700px">
                 <template v-slot:activator="{ on }">
                   <v-btn elevation="10" color="grey darken-3" dark class="mb-2" v-on="on">
                     Agregar&nbsp;
@@ -40,10 +40,10 @@
                   </v-card-title>
                   <v-card-text>
                     <v-container>
-                      <v-form ref="formUsuario" v-model="validForm" :lazy-validation="true">
+                      <v-form ref="formCoordinador" v-model="validForm" :lazy-validation="true">
                         <v-text-field
                           append-icon="mdi-folder-outline"
-                          v-model="usuario.nombre"
+                          v-model="cordinador.nombre"
                           @keyup="errorsNombre = []"
                           :rules="[v => !!v || 'Nombre Es Requerido']"
                           label="Nombre"
@@ -51,15 +51,16 @@
                           :error-messages="errorsNombre"
                         ></v-text-field>
 
-                        <v-text-field
-                          append-icon="mdi-folder-outline"
-                          v-model="usuario.passwd"
-                          @keyup="errorsNombre = []"
-                          :rules="[v => !!v || 'La clave Es Requerida']"
-                          label="Contraseña"
-                          required
-                          :error-messages="errorsNombre"
-                        ></v-text-field>
+                       <v-select
+                        v-model="cordinador.idusuario"
+                        :lazy-validation="true"
+                        :rules="[v => !!v || 'Este Campo Es Requerido']"
+                        label="Seleccionar Usuario admin"
+                        :items="listusuario"
+                        :item-text="'nombre'"
+                        :item-value="'id'"
+                    
+                      ></v-select>
                         
                       </v-form>
                     </v-container>
@@ -71,7 +72,7 @@
                     <v-btn
                       color="info darken-1"
                       :disabled="!validForm"
-                      @click="saveUsuario()"
+                      @click="saveCordinador()"
                       text
                       v-text="btnTitle"
                     ></v-btn>
@@ -111,13 +112,13 @@
                   dark
                   :disabled="item.id < 0"
                   v-on="on"
-                  @click="deleteUsuario(item)"
+                  @click="deleteCoordinador(item)"
                 >
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </template>
 
-              <span>Eliminar Usuario</span>
+              <span>Eliminar Coordinador</span>
             </v-tooltip>
             
           </template>
@@ -130,47 +131,47 @@
 export default {
   data() {
     return {
-      arrayUsuarios: [],
-      hTBUsuarios: [
+      arrayCoordinadores: [],
+      hTBCoordinadores: [
         { text: "Nombre", value: "nombre" },
-        { text: "Contraseña", value: "passwd" },
-        { text: "Tipo", value: "idtipo_usuario" },
+        { text: "Tipo", value: "idusuario" },
         { text: "Acciones", value: "action", sortable: false, align: "center" }
       ],
       loader: false,
-      searchUsuario: "",
-      modalUsuario: false,
-      usuario: {
+      searchCoordinador: "",
+      modalCoordinador: false,
+      listusuario: [],
+      cordinador: {
         id: null,
         nombre: "",
-        passwd: "",
-        idtipo_usuario: "",
+        idusuario: "",
+        
       },
       validForm: true,
       snackbar: false,
       msjSnackBar: "",
       errorsNombre: [],
-      editedArea: 0
+      editedCoordinador: 0
     };
   },
   computed: {
     formTitle() {
-      return this.usuario.id === null
-        ? "Agregar Usuario"
-        : "Actualizar Usuario";
+      return this.cordinador.id === null
+        ? "Agregar cordinador"
+        : "Actualizar cordinador";
     },
     btnTitle() {
-      return this.usuario.id === null ? "Guardar" : "Actualizar";
+      return this.cordinador.id === null ? "Guardar" : "Actualizar";
     }
   },
   methods: {
-    fetchUsuario() {
+    fetchCoordinador() {
       let me = this;
       me.loader = true;
       
-      axios.get('/usuarios')
+      axios.get('/coordinadores')
         .then(function(response) {
-          me.arrayUsuarios = response.data;
+          me.arrayCoordinadores = response.data;
           me.loader = false;
         })
         .catch(function(error) {
@@ -178,6 +179,21 @@ export default {
           console.log(error);
         });
     },
+    fetchlistUsuario() {
+      let me = this;
+      me.loader = true;
+      
+      axios.get('/usuarios/getId')
+        .then(function(response) {
+          me.listusuario = response.data;
+          me.loader = false;
+        })
+        .catch(function(error) {
+          me.loader = false;
+          console.log(error);
+        });
+    },
+
     setMessageToSnackBar(msj, estado) {
       let me = this;
       me.snackbar = estado;
@@ -185,13 +201,13 @@ export default {
     },
     cerrarModal() {
       let me = this;
-      me.modalUsuario = false;
+      me.modalCoordinador = false;
       setTimeout(() => {
-        me.usuario = {
+        me.cordinador = {
           id: null,
           nombre: "",
           passwd: "",
-          idtipo_usuario:"",
+          idusuario:"",
           
         };
         me.resetValidation();
@@ -200,21 +216,22 @@ export default {
     resetValidation() {
       let me = this;
       me.errorsNombre = [];
-      me.$refs.formUsuario.resetValidation();
+      me.$refs.formCoordinador.resetValidation();
     },
-    showModalEditar(usuario) {
+    showModalEditar(cordinador) {
       let me = this;
-      me.editedUsuario = me.arrayUsuarios.indexOf(usuario);
-      me.usuario = Object.assign({}, usuario);
-      me.modalUsuario = true;
+      me.editedCoordinador = me.arrayCoordinadores.indexOf(cordinador);
+      me.cordinador = Object.assign({}, cordinador);
+      me.modalCoordinador = true;
     },
-    saveUsuario() {
+    saveCordinador() {
       let me = this;
-      if (me.$refs.formUsuario.validate()) {
-        let accion = me.usuario.id == null ? "add" : "upd";
+      if (me.$refs.formCoordinador.validate()) {
+        let accion = me.cordinador.id == null ? "add" : "upd";
         me.loader = true;
         if(accion=="add"){
-           axios.post('/usuarios/save', me.usuario)
+            console.log(me.cordinador);
+           axios.post('/coordinadores/save', me.cordinador)
             .then(function(response) {
             me.verificarAccionDato(response.data, response.status, accion);
             me.cerrarModal();
@@ -232,7 +249,7 @@ export default {
           });
         }else{
             //para actualizar
-            axios.put('/usuarios/update',me.usuario)
+            axios.put('/coordinadores/update',me.cordinador)
                .then(function(response) {
                    console.log(response.data);
                     me.verificarAccionDato(response.data, response.status, accion);
@@ -246,9 +263,9 @@ export default {
       
       }
     },
-    deleteUsuario(usuario) {
+    deleteCoordinador(cordinador) {
       let me = this;
-      me.editedUsuario = me.arrayUsuarios.indexOf(usuario);
+      me.editedCoordinador = me.arrayCoordinadores.indexOf(cordinador);
       
       const Toast = Swal.mixin({
         toast: true,
@@ -263,7 +280,7 @@ export default {
         });
         //personalizando nueva confirmacion
         Swal.fire({
-        title: 'Eliminar Usuario ',
+        title: 'Eliminar cordinador ',
         text: "Una vez realizada la acción no se podra revertir !",
         icon: 'question',
         showCancelButton: true,
@@ -274,7 +291,7 @@ export default {
         }).then((result) => {
         if (result.value) {
             me.loader = true;
-            axios.put(`/usuarios/delete`, usuario)
+            axios.put(`/coordinadores/delete`, cordinador)
             .then(function(response) {
               me.verificarAccionDato(response.data, response.status, "del");
               me.loader = false;
@@ -282,7 +299,7 @@ export default {
           }
         });
     },
-    verificarAccionDato(usuario, statusCode, accion) {
+    verificarAccionDato(cordinador, statusCode, accion) {
       let me = this;
       const Toast = Swal.mixin({
         toast: true,
@@ -299,20 +316,20 @@ export default {
         case "add":
           //Agrego al array de areas el objecto que devuelve el Backend
           //me.arrayAreas.unshift(area);
-          this.fetchUsuario(); 
+          this.fetchCoordinador(); 
           Toast.fire({
             icon: 'success',
-            title: 'Usuarios Registrado con Exito'
+            title: 'cordinador Registrado con Exito'
            });
           me.loader = false;
           break;
         case "upd":
           //Actualizo al array de areas el objecto que devuelve el Backend ya con los datos actualizados
           //Object.assign(me.arrayAreas[me.editedArea], area);
-          this.fetchUsuario(); 
+          this.fetchCoordinador(); 
            Toast.fire({
             icon: 'success',
-            title: 'Usuarios Actualizado con Exito'
+            title: 'cordinador Actualizado con Exito'
            });
           me.loader = false;
           break;
@@ -323,10 +340,10 @@ export default {
               //me.arrayAreas.splice(me.editedArea, 1);
              // me.arrayAreas[me.editedArea].estado = '0';
               //Se Lanza mensaje Final
-              this.fetchUsuario();
+              this.fetchCoordinador();
               Toast.fire({
                 icon: 'success',
-                title: 'Usuario Eliminado'
+                title: 'cordinador Eliminado'
               });
             } catch (error) {
               console.log(error);
@@ -343,7 +360,8 @@ export default {
   },
   mounted() {
     let me = this;
-    me.fetchUsuario();
+    me.fetchCoordinador();
+    me.fetchlistUsuario();
   }
 };
 </script>

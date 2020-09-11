@@ -2267,6 +2267,379 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Coordinador.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Coordinador.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      arrayCoordinadores: [],
+      hTBCoordinadores: [{
+        text: "Nombre",
+        value: "nombre"
+      }, {
+        text: "Tipo",
+        value: "idusuario"
+      }, {
+        text: "Acciones",
+        value: "action",
+        sortable: false,
+        align: "center"
+      }],
+      loader: false,
+      searchCoordinador: "",
+      modalCoordinador: false,
+      listusuario: [],
+      cordinador: {
+        id: null,
+        nombre: "",
+        idusuario: ""
+      },
+      validForm: true,
+      snackbar: false,
+      msjSnackBar: "",
+      errorsNombre: [],
+      editedCoordinador: 0
+    };
+  },
+  computed: {
+    formTitle: function formTitle() {
+      return this.cordinador.id === null ? "Agregar cordinador" : "Actualizar cordinador";
+    },
+    btnTitle: function btnTitle() {
+      return this.cordinador.id === null ? "Guardar" : "Actualizar";
+    }
+  },
+  methods: {
+    fetchCoordinador: function fetchCoordinador() {
+      var me = this;
+      me.loader = true;
+      axios.get('/coordinadores').then(function (response) {
+        me.arrayCoordinadores = response.data;
+        me.loader = false;
+      })["catch"](function (error) {
+        me.loader = false;
+        console.log(error);
+      });
+    },
+    fetchlistUsuario: function fetchlistUsuario() {
+      var me = this;
+      me.loader = true;
+      axios.get('/usuarios/getId').then(function (response) {
+        me.listusuario = response.data;
+        me.loader = false;
+      })["catch"](function (error) {
+        me.loader = false;
+        console.log(error);
+      });
+    },
+    setMessageToSnackBar: function setMessageToSnackBar(msj, estado) {
+      var me = this;
+      me.snackbar = estado;
+      me.msjSnackBar = msj;
+    },
+    cerrarModal: function cerrarModal() {
+      var me = this;
+      me.modalCoordinador = false;
+      setTimeout(function () {
+        me.cordinador = {
+          id: null,
+          nombre: "",
+          passwd: "",
+          idusuario: ""
+        };
+        me.resetValidation();
+      }, 300);
+    },
+    resetValidation: function resetValidation() {
+      var me = this;
+      me.errorsNombre = [];
+      me.$refs.formCoordinador.resetValidation();
+    },
+    showModalEditar: function showModalEditar(cordinador) {
+      var me = this;
+      me.editedCoordinador = me.arrayCoordinadores.indexOf(cordinador);
+      me.cordinador = Object.assign({}, cordinador);
+      me.modalCoordinador = true;
+    },
+    saveCordinador: function saveCordinador() {
+      var me = this;
+
+      if (me.$refs.formCoordinador.validate()) {
+        var accion = me.cordinador.id == null ? "add" : "upd";
+        me.loader = true;
+
+        if (accion == "add") {
+          console.log(me.cordinador);
+          axios.post('/coordinadores/save', me.cordinador).then(function (response) {
+            me.verificarAccionDato(response.data, response.status, accion);
+            me.cerrarModal();
+          })["catch"](function (error) {
+            console.log(error); //409 Conflicts Error (Proveedor Ya Existente En la BD)
+
+            if (error.response.status == 409) {
+              me.setMessageToSnackBar("Area Ya Existe", true);
+              me.errorsNombre = ["Nombre De Area Existente"];
+            } else {
+              me.$swal("Error", "Ocurrio Un Error Intente Nuevamente", "error");
+            }
+
+            me.loader = false;
+          });
+        } else {
+          //para actualizar
+          axios.put('/coordinadores/update', me.cordinador).then(function (response) {
+            console.log(response.data);
+            me.verificarAccionDato(response.data, response.status, accion);
+            me.cerrarModal();
+          })["catch"](function (error) {
+            console.log(error);
+            me.loader = false;
+          });
+        }
+      }
+    },
+    deleteCoordinador: function deleteCoordinador(cordinador) {
+      var me = this;
+      me.editedCoordinador = me.arrayCoordinadores.indexOf(cordinador);
+      var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: function onOpen(toast) {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      }); //personalizando nueva confirmacion
+
+      Swal.fire({
+        title: 'Eliminar cordinador ',
+        text: "Una vez realizada la acción no se podra revertir !",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si',
+        cancelButtonText: "No"
+      }).then(function (result) {
+        if (result.value) {
+          me.loader = true;
+          axios.put("/coordinadores/delete", cordinador).then(function (response) {
+            me.verificarAccionDato(response.data, response.status, "del");
+            me.loader = false;
+          });
+        }
+      });
+    },
+    verificarAccionDato: function verificarAccionDato(cordinador, statusCode, accion) {
+      var me = this;
+      var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: function onOpen(toast) {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      });
+
+      switch (accion) {
+        case "add":
+          //Agrego al array de areas el objecto que devuelve el Backend
+          //me.arrayAreas.unshift(area);
+          this.fetchCoordinador();
+          Toast.fire({
+            icon: 'success',
+            title: 'cordinador Registrado con Exito'
+          });
+          me.loader = false;
+          break;
+
+        case "upd":
+          //Actualizo al array de areas el objecto que devuelve el Backend ya con los datos actualizados
+          //Object.assign(me.arrayAreas[me.editedArea], area);
+          this.fetchCoordinador();
+          Toast.fire({
+            icon: 'success',
+            title: 'cordinador Actualizado con Exito'
+          });
+          me.loader = false;
+          break;
+
+        case "del":
+          if (statusCode == 200) {
+            try {
+              //Se elimina del array de Areas Activos si todo esta bien en el backend
+              //me.arrayAreas.splice(me.editedArea, 1);
+              // me.arrayAreas[me.editedArea].estado = '0';
+              //Se Lanza mensaje Final
+              this.fetchCoordinador();
+              Toast.fire({
+                icon: 'success',
+                title: 'cordinador Eliminado'
+              });
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: 'Ocurrió un error, intente de nuevo'
+            });
+          }
+
+          break;
+      }
+    }
+  },
+  mounted: function mounted() {
+    var me = this;
+    me.fetchCoordinador();
+    me.fetchlistUsuario();
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Egresados.vue?vue&type=script&lang=js&":
 /*!********************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Egresados.vue?vue&type=script&lang=js& ***!
@@ -3168,6 +3541,9 @@ __webpack_require__.r(__webpack_exports__);
         text: "Contraseña",
         value: "passwd"
       }, {
+        text: "Tipo",
+        value: "idtipo_usuario"
+      }, {
         text: "Acciones",
         value: "action",
         sortable: false,
@@ -3178,7 +3554,9 @@ __webpack_require__.r(__webpack_exports__);
       modalUsuario: false,
       usuario: {
         id: null,
-        nombre: ""
+        nombre: "",
+        passwd: "",
+        idtipo_usuario: ""
       },
       validForm: true,
       snackbar: false,
@@ -3299,7 +3677,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.value) {
           me.loader = true;
-          axios.put("/usuarios/delete", me.usuario).then(function (response) {
+          axios.put("/usuarios/delete", usuario).then(function (response) {
             me.verificarAccionDato(response.data, response.status, "del");
             me.loader = false;
           });
@@ -3371,7 +3749,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     var me = this;
-    me.fetchUsuarios();
+    me.fetchUsuario();
   }
 });
 
@@ -39355,6 +39733,426 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Coordinador.vue?vue&type=template&id=4c816a05&":
+/*!**************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Coordinador.vue?vue&type=template&id=4c816a05& ***!
+  \**************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "content" }, [
+    _c(
+      "div",
+      {
+        staticClass:
+          "md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100"
+      },
+      [
+        _c(
+          "v-overlay",
+          { attrs: { value: _vm.loader, "z-index": "99999999" } },
+          [
+            _c("v-progress-circular", {
+              attrs: { indeterminate: "", size: "80", color: "grey darken-4" }
+            })
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "v-card",
+          [
+            _c(
+              "v-card-title",
+              [
+                _vm._v("\n        Listado de Coordinadores\n        "),
+                _c("div", { staticClass: "flex-grow-1" }),
+                _vm._v(" "),
+                _c("v-text-field", {
+                  attrs: { label: "Buscar Cordinadores", "hide-details": "" },
+                  model: {
+                    value: _vm.searchCoordinador,
+                    callback: function($$v) {
+                      _vm.searchCoordinador = $$v
+                    },
+                    expression: "searchCoordinador"
+                  }
+                })
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c("v-data-table", {
+              staticClass: "elevation-1",
+              attrs: {
+                headers: _vm.hTBCoordinadores,
+                items: _vm.arrayCoordinadores,
+                "footer-props": {
+                  "items-per-page-options": [5, 10, 20, 30, 40],
+                  "items-per-page-text": "Registros Por Página"
+                },
+                "items-per-page": 5,
+                search: _vm.searchCoordinador,
+                "multi-sort": ""
+              },
+              scopedSlots: _vm._u([
+                {
+                  key: "top",
+                  fn: function() {
+                    return [
+                      _c(
+                        "v-toolbar",
+                        { attrs: { flat: "", color: "white" } },
+                        [
+                          _c("div", { staticClass: "flex-grow-1" }),
+                          _vm._v(" "),
+                          _c(
+                            "v-dialog",
+                            {
+                              attrs: { persistent: "", "max-width": "700px" },
+                              scopedSlots: _vm._u([
+                                {
+                                  key: "activator",
+                                  fn: function(ref) {
+                                    var on = ref.on
+                                    return [
+                                      _c(
+                                        "v-btn",
+                                        _vm._g(
+                                          {
+                                            staticClass: "mb-2",
+                                            attrs: {
+                                              elevation: "10",
+                                              color: "grey darken-3",
+                                              dark: ""
+                                            }
+                                          },
+                                          on
+                                        ),
+                                        [
+                                          _vm._v(
+                                            "\n                  Agregar \n                  "
+                                          ),
+                                          _c("v-icon", [
+                                            _vm._v(
+                                              "mdi-plus-box-multiple-outline"
+                                            )
+                                          ])
+                                        ],
+                                        1
+                                      )
+                                    ]
+                                  }
+                                }
+                              ]),
+                              model: {
+                                value: _vm.modalCoordinador,
+                                callback: function($$v) {
+                                  _vm.modalCoordinador = $$v
+                                },
+                                expression: "modalCoordinador"
+                              }
+                            },
+                            [
+                              _vm._v(" "),
+                              _c(
+                                "v-card",
+                                [
+                                  _c(
+                                    "v-card-title",
+                                    {
+                                      staticClass: "headline grey lighten-2",
+                                      attrs: { "primary-titles": "" }
+                                    },
+                                    [
+                                      _c("span", {
+                                        staticClass: "headline",
+                                        domProps: {
+                                          textContent: _vm._s(_vm.formTitle)
+                                        }
+                                      })
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-card-text",
+                                    [
+                                      _c(
+                                        "v-container",
+                                        [
+                                          _c(
+                                            "v-form",
+                                            {
+                                              ref: "formCoordinador",
+                                              attrs: {
+                                                "lazy-validation": true
+                                              },
+                                              model: {
+                                                value: _vm.validForm,
+                                                callback: function($$v) {
+                                                  _vm.validForm = $$v
+                                                },
+                                                expression: "validForm"
+                                              }
+                                            },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  "append-icon":
+                                                    "mdi-folder-outline",
+                                                  rules: [
+                                                    function(v) {
+                                                      return (
+                                                        !!v ||
+                                                        "Nombre Es Requerido"
+                                                      )
+                                                    }
+                                                  ],
+                                                  label: "Nombre",
+                                                  required: "",
+                                                  "error-messages":
+                                                    _vm.errorsNombre
+                                                },
+                                                on: {
+                                                  keyup: function($event) {
+                                                    _vm.errorsNombre = []
+                                                  }
+                                                },
+                                                model: {
+                                                  value: _vm.cordinador.nombre,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.cordinador,
+                                                      "nombre",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "cordinador.nombre"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("v-select", {
+                                                attrs: {
+                                                  "lazy-validation": true,
+                                                  rules: [
+                                                    function(v) {
+                                                      return (
+                                                        !!v ||
+                                                        "Este Campo Es Requerido"
+                                                      )
+                                                    }
+                                                  ],
+                                                  label:
+                                                    "Seleccionar Usuario admin",
+                                                  items: _vm.listusuario,
+                                                  "item-text": "nombre",
+                                                  "item-value": "id"
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.cordinador.idusuario,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.cordinador,
+                                                      "idusuario",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "cordinador.idusuario"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c("v-divider"),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-card-actions",
+                                    [
+                                      _c("div", { staticClass: "flex-grow-1" }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: {
+                                            color: "red darken-1",
+                                            text: ""
+                                          },
+                                          on: { click: _vm.cerrarModal }
+                                        },
+                                        [_vm._v("Cerrar")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("v-btn", {
+                                        attrs: {
+                                          color: "info darken-1",
+                                          disabled: !_vm.validForm,
+                                          text: ""
+                                        },
+                                        domProps: {
+                                          textContent: _vm._s(_vm.btnTitle)
+                                        },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.saveCordinador()
+                                          }
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ]
+                  },
+                  proxy: true
+                },
+                {
+                  key: "item.action",
+                  fn: function(ref) {
+                    var item = ref.item
+                    return [
+                      _c(
+                        "v-tooltip",
+                        {
+                          attrs: { top: "" },
+                          scopedSlots: _vm._u(
+                            [
+                              {
+                                key: "activator",
+                                fn: function(ref) {
+                                  var on = ref.on
+                                  return [
+                                    _c(
+                                      "v-btn",
+                                      _vm._g(
+                                        {
+                                          attrs: {
+                                            color: "success",
+                                            elevation: "8",
+                                            small: "",
+                                            dark: "",
+                                            disabled: item.id < 0
+                                          },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.showModalEditar(item)
+                                            }
+                                          }
+                                        },
+                                        on
+                                      ),
+                                      [_c("v-icon", [_vm._v("mdi-pencil")])],
+                                      1
+                                    )
+                                  ]
+                                }
+                              }
+                            ],
+                            null,
+                            true
+                          )
+                        },
+                        [_vm._v(" "), _c("span", [_vm._v("Actualizar Datos")])]
+                      ),
+                      _vm._v(" "),
+                      item.nombre != "null"
+                        ? _c(
+                            "v-tooltip",
+                            {
+                              attrs: { top: "" },
+                              scopedSlots: _vm._u(
+                                [
+                                  {
+                                    key: "activator",
+                                    fn: function(ref) {
+                                      var on = ref.on
+                                      return [
+                                        _c(
+                                          "v-btn",
+                                          _vm._g(
+                                            {
+                                              staticClass: "mx-1",
+                                              attrs: {
+                                                color: "info",
+                                                elevation: "8",
+                                                small: "",
+                                                dark: "",
+                                                disabled: item.id < 0
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.deleteCoordinador(
+                                                    item
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            on
+                                          ),
+                                          [
+                                            _c("v-icon", [_vm._v("mdi-delete")])
+                                          ],
+                                          1
+                                        )
+                                      ]
+                                    }
+                                  }
+                                ],
+                                null,
+                                true
+                              )
+                            },
+                            [
+                              _vm._v(" "),
+                              _c("span", [_vm._v("Eliminar Coordinador")])
+                            ]
+                          )
+                        : _vm._e()
+                    ]
+                  }
+                }
+              ])
+            })
+          ],
+          1
+        )
+      ],
+      1
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Egresados.vue?vue&type=template&id=739c7eaa&":
 /*!************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Egresados.vue?vue&type=template&id=739c7eaa& ***!
@@ -41854,7 +42652,7 @@ var render = function() {
                                                       )
                                                     }
                                                   ],
-                                                  label: "Nombre",
+                                                  label: "Contraseña",
                                                   required: "",
                                                   "error-messages":
                                                     _vm.errorsNombre
@@ -98050,6 +98848,7 @@ Vue.component('reporte-component', __webpack_require__(/*! ./components/Reportes
 Vue.component('area-component', __webpack_require__(/*! ./components/Areas.vue */ "./resources/js/components/Areas.vue")["default"]);
 Vue.component('tipousuario-component', __webpack_require__(/*! ./components/TipoUsuario.vue */ "./resources/js/components/TipoUsuario.vue")["default"]);
 Vue.component('usuarios-component', __webpack_require__(/*! ./components/Usuarios.vue */ "./resources/js/components/Usuarios.vue")["default"]);
+Vue.component('coordinador-component', __webpack_require__(/*! ./components/Coordinador.vue */ "./resources/js/components/Coordinador.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -98176,6 +98975,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Areas_vue_vue_type_template_id_653af1aa___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Areas_vue_vue_type_template_id_653af1aa___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Coordinador.vue":
+/*!*************************************************!*\
+  !*** ./resources/js/components/Coordinador.vue ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Coordinador_vue_vue_type_template_id_4c816a05___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Coordinador.vue?vue&type=template&id=4c816a05& */ "./resources/js/components/Coordinador.vue?vue&type=template&id=4c816a05&");
+/* harmony import */ var _Coordinador_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Coordinador.vue?vue&type=script&lang=js& */ "./resources/js/components/Coordinador.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Coordinador_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Coordinador_vue_vue_type_template_id_4c816a05___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Coordinador_vue_vue_type_template_id_4c816a05___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Coordinador.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Coordinador.vue?vue&type=script&lang=js&":
+/*!**************************************************************************!*\
+  !*** ./resources/js/components/Coordinador.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Coordinador_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Coordinador.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Coordinador.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Coordinador_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Coordinador.vue?vue&type=template&id=4c816a05&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/components/Coordinador.vue?vue&type=template&id=4c816a05& ***!
+  \********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Coordinador_vue_vue_type_template_id_4c816a05___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Coordinador.vue?vue&type=template&id=4c816a05& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Coordinador.vue?vue&type=template&id=4c816a05&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Coordinador_vue_vue_type_template_id_4c816a05___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Coordinador_vue_vue_type_template_id_4c816a05___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -98857,8 +99725,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\wamp64\www\SIIL\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\wamp64\www\SIIL\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\wamp64\www\SIILv2\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\wamp64\www\SIILv2\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

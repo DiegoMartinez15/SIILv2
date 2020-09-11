@@ -26,3 +26,16 @@ Route::post('/areas/save', 'AreaController@store');
 Route::put('/areas/update', 'AreaController@update');
 
 Route::put('/areas/delete', 'AreaController@delete');
+
+//Usuarios
+Route::get('/usuarios', 'UsuarioController@index');
+Route::get('/usuarios/getId', 'UsuarioController@getById');
+Route::post('/usuarios/save', 'UsuarioController@store');
+Route::put('/usuarios/update', 'UsuarioController@update');
+Route::put('/usuarios/delete', 'UsuarioController@delete');
+//coordinadores
+Route::get('/coordinadores', 'CoordinadorController@index');
+
+Route::post('/coordinadores/save', 'CoordinadorController@store');
+Route::put('/coordinadores/update', 'CoordinadorController@update');
+Route::put('/coordinadores/delete', 'CoordinadorController@delete');

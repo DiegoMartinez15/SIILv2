@@ -110,6 +110,12 @@
                   <p>Usuarios</p>
                 </a>
               </li>
+              <li @click="menu=12" class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-clipboard"></i>
+                  <p>Coordinar</p>
+                </a>
+              </li>
               <hr>
             </ul>
           </li>

@@ -31,6 +31,7 @@ Vue.component('reporte-component', require('./components/Reportes.vue').default)
 Vue.component('area-component', require('./components/Areas.vue').default);
 Vue.component('tipousuario-component', require('./components/TipoUsuario.vue').default);
 Vue.component('usuarios-component', require('./components/Usuarios.vue').default);
+Vue.component('coordinador-component', require('./components/Coordinador.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
