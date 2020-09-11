@@ -94,25 +94,19 @@
               </li>
               <li @click="menu=9" class="nav-item">
                 <a href="#" class="nav-link">
-                  <i class="far fa-clipboard"></i>
+                  <i class="fas fa-warehouse"></i>
                   <p>Areas</p>
-                </a>
-              </li>
-              <li @click="menu=10" class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="far fa-clipboard"></i>
-                  <p>Tipo</p>
                 </a>
               </li>
               <li @click="menu=11" class="nav-item">
                 <a href="#" class="nav-link">
-                  <i class="far fa-clipboard"></i>
+                  <i class="fas fa-users"></i>
                   <p>Usuarios</p>
                 </a>
               </li>
               <li @click="menu=12" class="nav-item">
                 <a href="#" class="nav-link">
-                  <i class="far fa-clipboard"></i>
+                  <i class="fas fa-user-tie"></i>
                   <p>Coordinar</p>
                 </a>
               </li>

@@ -39,3 +39,9 @@ Route::get('/coordinadores', 'CoordinadorController@index');
 Route::post('/coordinadores/save', 'CoordinadorController@store');
 Route::put('/coordinadores/update', 'CoordinadorController@update');
 Route::put('/coordinadores/delete', 'CoordinadorController@delete');
+
+//empresa
+Route::get('/empresas', 'EmpresaController@index');
+Route::post('/empresas/save', 'EmpresaController@store');
+Route::put('/empresas/update', 'EmpresaController@update');
+Route::put('/empresas/delete', 'EmpresaController@delete');

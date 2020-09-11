@@ -12,11 +12,11 @@ class CoordinadorController extends Controller
     public function index(){
         
 
-        $categoria = Coordinador::join('tipos_usuarios','coordinadores.idusuario','=','tipos_usuarios.id')
+        $coordinador = Coordinador::join('tipos_usuarios','coordinadores.idusuario','=','tipos_usuarios.id')
         ->select('coordinadores.id','coordinadores.nombre','coordinadores.idusuario',
         'tipos_usuarios.nombre as idusuario')->get();
         
-        return $categoria;
+        return $coordinador;
         //$coordinador =Coordinador::orderBy('id','DESC')->get();
         //return $coordinador;
         

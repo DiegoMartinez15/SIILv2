@@ -2996,117 +2996,339 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      dialog: false,
-      search: '',
-      headers: [{
-        align: 'start',
+      arrayEmpresas: [],
+      hTBEmpresas: [{
+        text: "Nombre",
+        value: "nombre"
+      }, {
+        text: "Direccion",
+        value: "direccion"
+      }, {
+        text: "Telefono",
+        value: "telefono"
+      }, {
+        text: "Encargado",
+        value: "encargado"
+      }, {
+        text: "Area",
+        value: "idarea"
+      }, {
+        text: "Acciones",
+        value: "action",
         sortable: false,
-        value: 'name'
-      }, {
-        text: 'Empresa',
-        value: 'nombre'
-      }, {
-        text: 'Direccion',
-        value: 'direcicon'
-      }, {
-        text: 'Telefono',
-        value: 'telefono'
-      }, {
-        text: 'Encargado',
-        value: 'encargado'
-      }, {
-        text: 'Giro',
-        value: 'idempresa'
-      }, {
-        text: 'Acciones',
-        value: 'actions',
-        sortable: false
+        align: "center"
       }],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {
-        name: '',
-        calories: '',
-        fat: '',
-        carbs: '',
-        cor: '',
-        protein: ''
+      loader: false,
+      searchEmpresa: "",
+      modalEmpresa: false,
+      listcoordinadores: [],
+      listarea: [],
+      empresa: {
+        id: null,
+        nombre: "",
+        direccion: "",
+        telefono: "",
+        encargado: "",
+        idarea: "",
+        idcoordinador: ""
       },
-      defaultItem: {
-        name: '',
-        calories: '',
-        fat: '',
-        carbs: '',
-        cor: '',
-        protein: ''
-      }
+      validForm: true,
+      snackbar: false,
+      msjSnackBar: "",
+      errorsNombre: [],
+      editedEmpresa: 0
     };
   },
   computed: {
     formTitle: function formTitle() {
-      return this.editedIndex === -1 ? 'Nuevo Registro!' : 'Actualizar';
+      return this.empresa.id === null ? "Agregar empresa" : "Actualizar empresa";
+    },
+    btnTitle: function btnTitle() {
+      return this.empresa.id === null ? "Guardar" : "Actualizar";
     }
-  },
-  watch: {
-    dialog: function dialog(val) {
-      val || this.close();
-    }
-  },
-  created: function created() {
-    this.initialize();
   },
   methods: {
-    initialize: function initialize() {
-      this.desserts = [{
-        name: 'AEON',
-        calories: 'Chalatenango, calle el Chile',
-        fat: '7845-8956',
-        carbs: 'David Morillo',
-        cor: 'Luis Alvarenga'
-      }, {
-        name: 'Zona Digital',
-        calories: 'San Salvador',
-        fat: '2345-8978',
-        carbs: 'Aaron Castillo',
-        cor: 'Diego Martinez'
-      }, {
-        name: 'Kayfa',
-        calories: 'San Salvador',
-        fat: '2345-8978',
-        carbs: 'Aaron Castillo',
-        cor: 'Diego Martinez'
-      }];
-    },
-    editItem: function editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-    },
-    deleteItem: function deleteItem(item) {
-      var index = this.desserts.indexOf(item);
-      confirm('Esta seguro de eliminar el registro?') && this.desserts.splice(index, 1);
-    },
-    close: function close() {
-      var _this = this;
-
-      this.dialog = false;
-      this.$nextTick(function () {
-        _this.editedItem = Object.assign({}, _this.defaultItem);
-        _this.editedIndex = -1;
+    fetchEmpresa: function fetchEmpresa() {
+      var me = this;
+      me.loader = true;
+      axios.get('/empresas').then(function (response) {
+        me.arrayEmpresas = response.data;
+        me.loader = false;
+      })["catch"](function (error) {
+        me.loader = false;
+        console.log(error);
       });
     },
-    save: function save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
-      } else {
-        this.desserts.push(this.editedItem);
-      }
+    fetchCoordinador: function fetchCoordinador() {
+      var me = this;
+      me.loader = true;
+      axios.get('/coordinadores').then(function (response) {
+        me.listcoordinadores = response.data;
+        me.loader = false;
+      })["catch"](function (error) {
+        me.loader = false;
+        console.log(error);
+      });
+    },
+    fetchArea: function fetchArea() {
+      var me = this;
+      me.loader = true;
+      axios.get('/areas').then(function (response) {
+        me.listarea = response.data;
+        me.loader = false;
+      })["catch"](function (error) {
+        me.loader = false;
+        console.log(error);
+      });
+    },
+    setMessageToSnackBar: function setMessageToSnackBar(msj, estado) {
+      var me = this;
+      me.snackbar = estado;
+      me.msjSnackBar = msj;
+    },
+    cerrarModal: function cerrarModal() {
+      var me = this;
+      me.modalEmpresa = false;
+      setTimeout(function () {
+        me.empresa = {
+          id: null,
+          nombre: "",
+          direccion: "",
+          telefono: "",
+          idarea: "",
+          idcoordinador: ""
+        };
+        me.resetValidation();
+      }, 300);
+    },
+    resetValidation: function resetValidation() {
+      var me = this;
+      me.errorsNombre = [];
+      me.$refs.formEmpresa.resetValidation();
+    },
+    showModalEditar: function showModalEditar(empresa) {
+      var me = this;
+      me.editedEmpresa = me.arrayEmpresas.indexOf(empresa);
+      me.empresa = Object.assign({}, empresa);
+      me.modalEmpresa = true;
+    },
+    saveEmpresa: function saveEmpresa() {
+      var me = this;
 
-      this.close();
+      if (me.$refs.formEmpresa.validate()) {
+        var accion = me.empresa.id == null ? "add" : "upd";
+        me.loader = true;
+
+        if (accion == "add") {
+          console.log(me.empresa);
+          axios.post('/empresas/save', me.empresa).then(function (response) {
+            me.verificarAccionDato(response.data, response.status, accion);
+            me.cerrarModal();
+          })["catch"](function (error) {
+            console.log(error); //409 Conflicts Error (Proveedor Ya Existente En la BD)
+
+            if (error.response.status == 409) {
+              me.setMessageToSnackBar("Area Ya Existe", true);
+              me.errorsNombre = ["Nombre De Area Existente"];
+            } else {
+              me.$swal("Error", "Ocurrio Un Error Intente Nuevamente", "error");
+            }
+
+            me.loader = false;
+          });
+        } else {
+          //para actualizar
+          console.log(me.empresa);
+          axios.put('/empresas/update', me.empresa).then(function (response) {
+            console.log(response.data);
+            me.verificarAccionDato(response.data, response.status, accion);
+            me.cerrarModal();
+          })["catch"](function (error) {
+            console.log(error);
+            me.loader = false;
+          });
+        }
+      }
+    },
+    deleteEmpresa: function deleteEmpresa(empresa) {
+      var me = this;
+      me.editedEmpresa = me.arrayEmpresas.indexOf(empresa);
+      var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: function onOpen(toast) {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      }); //personalizando nueva confirmacion
+
+      Swal.fire({
+        title: 'Eliminar empresa ',
+        text: "Una vez realizada la acción no se podra revertir !",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si',
+        cancelButtonText: "No"
+      }).then(function (result) {
+        if (result.value) {
+          me.loader = true;
+          axios.put("/empresas/delete", empresa).then(function (response) {
+            me.verificarAccionDato(response.data, response.status, "del");
+            me.loader = false;
+          });
+        }
+      });
+    },
+    verificarAccionDato: function verificarAccionDato(empresa, statusCode, accion) {
+      var me = this;
+      var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: function onOpen(toast) {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      });
+
+      switch (accion) {
+        case "add":
+          //Agrego al array de areas el objecto que devuelve el Backend
+          //me.arrayAreas.unshift(area);
+          this.fetchEmpresa();
+          Toast.fire({
+            icon: 'success',
+            title: 'cordinador Registrado con Exito'
+          });
+          me.loader = false;
+          break;
+
+        case "upd":
+          //Actualizo al array de areas el objecto que devuelve el Backend ya con los datos actualizados
+          //Object.assign(me.arrayAreas[me.editedArea], area);
+          this.fetchEmpresa();
+          Toast.fire({
+            icon: 'success',
+            title: 'cordinador Actualizado con Exito'
+          });
+          me.loader = false;
+          break;
+
+        case "del":
+          if (statusCode == 200) {
+            try {
+              //Se elimina del array de Areas Activos si todo esta bien en el backend
+              //me.arrayAreas.splice(me.editedArea, 1);
+              // me.arrayAreas[me.editedArea].estado = '0';
+              //Se Lanza mensaje Final
+              this.fetchEmpresa();
+              Toast.fire({
+                icon: 'success',
+                title: 'cordinador Eliminado'
+              });
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: 'Ocurrió un error, intente de nuevo'
+            });
+          }
+
+          break;
+      }
     }
+  },
+  mounted: function mounted() {
+    var me = this;
+    me.fetchEmpresa();
+    me.fetchCoordinador();
+    me.fetchArea();
   }
 });
 
@@ -40615,251 +40837,406 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("v-data-table", {
-    staticClass: "elevation-1",
-    attrs: {
-      headers: _vm.headers,
-      items: _vm.desserts,
-      "sort-by": "calories",
-      search: _vm.search
-    },
-    scopedSlots: _vm._u(
+  return _c("div", { staticClass: "content" }, [
+    _c(
+      "div",
+      {
+        staticClass:
+          "md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100"
+      },
       [
-        {
-          key: "top",
-          fn: function() {
-            return [
-              _c(
-                "v-toolbar",
-                { attrs: { flat: "", color: "dark" } },
-                [
-                  _c("v-toolbar-title", [_vm._v("Registro de Empresa")]),
-                  _vm._v(" "),
-                  _c("v-divider", {
-                    staticClass: "mx-4",
-                    attrs: { inset: "", vertical: "" }
-                  }),
-                  _vm._v(" "),
-                  _c("v-spacer"),
-                  _vm._v(" "),
-                  _c("v-text-field", {
-                    attrs: {
-                      "append-icon": "mdi-magnify",
-                      label: "Buscar..",
-                      "single-line": "",
-                      "hide-details": ""
+        _c(
+          "v-overlay",
+          { attrs: { value: _vm.loader, "z-index": "99999999" } },
+          [
+            _c("v-progress-circular", {
+              attrs: { indeterminate: "", size: "80", color: "grey darken-4" }
+            })
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "v-card",
+          [
+            _c(
+              "v-card-title",
+              [
+                _vm._v("\n        Listado de Empresas\n        "),
+                _c("div", { staticClass: "flex-grow-1" }),
+                _vm._v(" "),
+                _c("v-text-field", {
+                  attrs: { label: "Buscar Empresa", "hide-details": "" },
+                  model: {
+                    value: _vm.searchEmpresa,
+                    callback: function($$v) {
+                      _vm.searchEmpresa = $$v
                     },
-                    model: {
-                      value: _vm.search,
-                      callback: function($$v) {
-                        _vm.search = $$v
-                      },
-                      expression: "search"
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "v-dialog",
-                    {
-                      attrs: { "max-width": "600px" },
-                      scopedSlots: _vm._u([
-                        {
-                          key: "activator",
-                          fn: function(ref) {
-                            var on = ref.on
-                            return [
-                              _c(
-                                "v-btn",
-                                _vm._g(
-                                  {
-                                    staticClass: "mb-2",
-                                    staticStyle: {
-                                      "margin-left": "18%",
-                                      background: "#A426E3",
-                                      color: "white"
-                                    },
-                                    attrs: { dark: "" }
-                                  },
-                                  on
-                                ),
-                                [
-                                  _c("i", { staticClass: "fas fa-plus" }),
-                                  _vm._v(" Agregar")
-                                ]
-                              )
-                            ]
-                          }
-                        }
-                      ]),
-                      model: {
-                        value: _vm.dialog,
-                        callback: function($$v) {
-                          _vm.dialog = $$v
-                        },
-                        expression: "dialog"
-                      }
-                    },
-                    [
-                      _vm._v(" "),
+                    expression: "searchEmpresa"
+                  }
+                })
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c("v-data-table", {
+              staticClass: "elevation-1",
+              attrs: {
+                headers: _vm.hTBEmpresas,
+                items: _vm.arrayEmpresas,
+                "footer-props": {
+                  "items-per-page-options": [5, 10, 20, 30, 40],
+                  "items-per-page-text": "Registros Por Página"
+                },
+                "items-per-page": 5,
+                search: _vm.searchEmpresa,
+                "multi-sort": ""
+              },
+              scopedSlots: _vm._u([
+                {
+                  key: "top",
+                  fn: function() {
+                    return [
                       _c(
-                        "v-card",
+                        "v-toolbar",
+                        { attrs: { flat: "", color: "white" } },
                         [
-                          _c("v-card-title", [
-                            _c("span", { staticClass: "headline" }, [
-                              _vm._v(_vm._s(_vm.formTitle))
-                            ])
-                          ]),
+                          _c("div", { staticClass: "flex-grow-1" }),
                           _vm._v(" "),
                           _c(
-                            "v-card-text",
-                            [
-                              _c(
-                                "v-container",
-                                [
-                                  _c(
-                                    "v-row",
-                                    [
+                            "v-dialog",
+                            {
+                              attrs: { persistent: "", "max-width": "700px" },
+                              scopedSlots: _vm._u([
+                                {
+                                  key: "activator",
+                                  fn: function(ref) {
+                                    var on = ref.on
+                                    return [
                                       _c(
-                                        "v-col",
-                                        {
-                                          attrs: {
-                                            cols: "12",
-                                            sm: "6",
-                                            md: "4"
-                                          }
-                                        },
-                                        [
-                                          _c("v-text-field", {
+                                        "v-btn",
+                                        _vm._g(
+                                          {
+                                            staticClass: "mb-2",
                                             attrs: {
-                                              label: "Nombre de Empresa"
-                                            },
-                                            model: {
-                                              value: _vm.editedItem.name,
-                                              callback: function($$v) {
-                                                _vm.$set(
-                                                  _vm.editedItem,
-                                                  "name",
-                                                  $$v
-                                                )
-                                              },
-                                              expression: "editedItem.name"
+                                              elevation: "10",
+                                              color: "grey darken-3",
+                                              dark: ""
                                             }
-                                          })
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-col",
-                                        {
-                                          attrs: {
-                                            cols: "12",
-                                            sm: "6",
-                                            md: "4"
-                                          }
-                                        },
+                                          },
+                                          on
+                                        ),
                                         [
-                                          _c("v-text-field", {
-                                            attrs: { label: "Direcion" },
-                                            model: {
-                                              value: _vm.editedItem.calories,
-                                              callback: function($$v) {
-                                                _vm.$set(
-                                                  _vm.editedItem,
-                                                  "calories",
-                                                  $$v
-                                                )
-                                              },
-                                              expression: "editedItem.calories"
-                                            }
-                                          })
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-col",
-                                        {
-                                          attrs: {
-                                            cols: "12",
-                                            sm: "6",
-                                            md: "4"
-                                          }
-                                        },
-                                        [
-                                          _c("v-text-field", {
-                                            attrs: { label: "Telefono" },
-                                            model: {
-                                              value: _vm.editedItem.fat,
-                                              callback: function($$v) {
-                                                _vm.$set(
-                                                  _vm.editedItem,
-                                                  "fat",
-                                                  $$v
-                                                )
-                                              },
-                                              expression: "editedItem.fat"
-                                            }
-                                          })
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-col",
-                                        {
-                                          attrs: {
-                                            cols: "12",
-                                            sm: "6",
-                                            md: "4"
-                                          }
-                                        },
-                                        [
-                                          _c("v-text-field", {
-                                            attrs: { label: "Representante" },
-                                            model: {
-                                              value: _vm.editedItem.carbs,
-                                              callback: function($$v) {
-                                                _vm.$set(
-                                                  _vm.editedItem,
-                                                  "carbs",
-                                                  $$v
-                                                )
-                                              },
-                                              expression: "editedItem.carbs"
-                                            }
-                                          })
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-col",
-                                        {
-                                          attrs: {
-                                            cols: "12",
-                                            sm: "6",
-                                            md: "4"
-                                          }
-                                        },
-                                        [
-                                          _c("v-text-field", {
-                                            attrs: { label: "Cordinador" },
-                                            model: {
-                                              value: _vm.editedItem.cor,
-                                              callback: function($$v) {
-                                                _vm.$set(
-                                                  _vm.editedItem,
-                                                  "cor",
-                                                  $$v
-                                                )
-                                              },
-                                              expression: "editedItem.cor"
-                                            }
-                                          })
+                                          _vm._v(
+                                            "\n                  Agregar \n                  "
+                                          ),
+                                          _c("v-icon", [
+                                            _vm._v(
+                                              "mdi-plus-box-multiple-outline"
+                                            )
+                                          ])
                                         ],
                                         1
                                       )
+                                    ]
+                                  }
+                                }
+                              ]),
+                              model: {
+                                value: _vm.modalEmpresa,
+                                callback: function($$v) {
+                                  _vm.modalEmpresa = $$v
+                                },
+                                expression: "modalEmpresa"
+                              }
+                            },
+                            [
+                              _vm._v(" "),
+                              _c(
+                                "v-card",
+                                [
+                                  _c(
+                                    "v-card-title",
+                                    {
+                                      staticClass: "headline grey lighten-2",
+                                      attrs: { "primary-titles": "" }
+                                    },
+                                    [
+                                      _c("span", {
+                                        staticClass: "headline",
+                                        domProps: {
+                                          textContent: _vm._s(_vm.formTitle)
+                                        }
+                                      })
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-card-text",
+                                    [
+                                      _c(
+                                        "v-container",
+                                        [
+                                          _c(
+                                            "v-form",
+                                            {
+                                              ref: "formEmpresa",
+                                              attrs: {
+                                                "lazy-validation": true
+                                              },
+                                              model: {
+                                                value: _vm.validForm,
+                                                callback: function($$v) {
+                                                  _vm.validForm = $$v
+                                                },
+                                                expression: "validForm"
+                                              }
+                                            },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  "append-icon":
+                                                    "mdi-folder-outline",
+                                                  rules: [
+                                                    function(v) {
+                                                      return (
+                                                        !!v ||
+                                                        "Nombre Es Requerido"
+                                                      )
+                                                    }
+                                                  ],
+                                                  label: "Nombre",
+                                                  required: "",
+                                                  "error-messages":
+                                                    _vm.errorsNombre
+                                                },
+                                                on: {
+                                                  keyup: function($event) {
+                                                    _vm.errorsNombre = []
+                                                  }
+                                                },
+                                                model: {
+                                                  value: _vm.empresa.nombre,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.empresa,
+                                                      "nombre",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "empresa.nombre"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  "append-icon":
+                                                    "mdi-folder-outline",
+                                                  rules: [
+                                                    function(v) {
+                                                      return (
+                                                        !!v ||
+                                                        "La Direccion Es Requerida"
+                                                      )
+                                                    }
+                                                  ],
+                                                  label: "Direccion",
+                                                  required: "",
+                                                  "error-messages":
+                                                    _vm.errorsNombre
+                                                },
+                                                on: {
+                                                  keyup: function($event) {
+                                                    _vm.errorsNombre = []
+                                                  }
+                                                },
+                                                model: {
+                                                  value: _vm.empresa.direccion,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.empresa,
+                                                      "direccion",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "empresa.direccion"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  "append-icon":
+                                                    "mdi-folder-outline",
+                                                  rules: [
+                                                    function(v) {
+                                                      return (
+                                                        !!v ||
+                                                        "El Telefono Es Requerido"
+                                                      )
+                                                    }
+                                                  ],
+                                                  label: "Telefono",
+                                                  required: "",
+                                                  "error-messages":
+                                                    _vm.errorsNombre
+                                                },
+                                                on: {
+                                                  keyup: function($event) {
+                                                    _vm.errorsNombre = []
+                                                  }
+                                                },
+                                                model: {
+                                                  value: _vm.empresa.telefono,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.empresa,
+                                                      "telefono",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "empresa.telefono"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  "append-icon":
+                                                    "mdi-folder-outline",
+                                                  rules: [
+                                                    function(v) {
+                                                      return (
+                                                        !!v ||
+                                                        "El Encargado Es Requerido"
+                                                      )
+                                                    }
+                                                  ],
+                                                  label: "Encargado",
+                                                  required: "",
+                                                  "error-messages":
+                                                    _vm.errorsNombre
+                                                },
+                                                on: {
+                                                  keyup: function($event) {
+                                                    _vm.errorsNombre = []
+                                                  }
+                                                },
+                                                model: {
+                                                  value: _vm.empresa.encargado,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.empresa,
+                                                      "encargado",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "empresa.encargado"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("v-select", {
+                                                attrs: {
+                                                  label: "Seleccionar Area",
+                                                  rules: [
+                                                    function(v) {
+                                                      return (
+                                                        !!v ||
+                                                        "Este Campor es requerido"
+                                                      )
+                                                    }
+                                                  ],
+                                                  items: _vm.listarea,
+                                                  "item-text": "nombre",
+                                                  "item-value": "id"
+                                                },
+                                                model: {
+                                                  value: _vm.empresa.idarea,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.empresa,
+                                                      "idarea",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "empresa.idarea"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("v-select", {
+                                                attrs: {
+                                                  label:
+                                                    "Seleccionar Coordinador",
+                                                  rules: [
+                                                    function(v) {
+                                                      return (
+                                                        !!v ||
+                                                        "Este Campor es requerido"
+                                                      )
+                                                    }
+                                                  ],
+                                                  items: _vm.listcoordinadores,
+                                                  "item-text": "nombre",
+                                                  "item-value": "id"
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.empresa.idcoordinador,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.empresa,
+                                                      "idcoordinador",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "empresa.idcoordinador"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c("v-divider"),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-card-actions",
+                                    [
+                                      _c("div", { staticClass: "flex-grow-1" }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: {
+                                            color: "red darken-1",
+                                            text: ""
+                                          },
+                                          on: { click: _vm.cerrarModal }
+                                        },
+                                        [_vm._v("Cerrar")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("v-btn", {
+                                        attrs: {
+                                          color: "info darken-1",
+                                          disabled: !_vm.validForm,
+                                          text: ""
+                                        },
+                                        domProps: {
+                                          textContent: _vm._s(_vm.btnTitle)
+                                        },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.saveEmpresa()
+                                          }
+                                        }
+                                      })
                                     ],
                                     1
                                   )
@@ -40868,98 +41245,126 @@ var render = function() {
                               )
                             ],
                             1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-card-actions",
-                            [
-                              _c("v-spacer"),
-                              _vm._v(" "),
-                              _c(
-                                "v-btn",
-                                {
-                                  attrs: { color: "blue darken-1", text: "" },
-                                  on: { click: _vm.close }
-                                },
-                                [_vm._v("Cancelar")]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "v-btn",
-                                {
-                                  attrs: { color: "blue darken-1", text: "" },
-                                  on: { click: _vm.save }
-                                },
-                                [_vm._v("Save")]
-                              )
-                            ],
-                            1
                           )
                         ],
                         1
                       )
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
-            ]
-          },
-          proxy: true
-        },
-        {
-          key: "item.actions",
-          fn: function(ref) {
-            var item = ref.item
-            return [
-              _c(
-                "v-icon",
-                {
-                  staticClass: "mr-2",
-                  attrs: { small: "" },
-                  on: {
-                    click: function($event) {
-                      return _vm.editItem(item)
-                    }
-                  }
+                    ]
+                  },
+                  proxy: true
                 },
-                [_vm._v("\n      mdi-pencil\n    ")]
-              ),
-              _vm._v(" "),
-              _c(
-                "v-icon",
                 {
-                  attrs: { small: "" },
-                  on: {
-                    click: function($event) {
-                      return _vm.deleteItem(item)
-                    }
+                  key: "item.action",
+                  fn: function(ref) {
+                    var item = ref.item
+                    return [
+                      _c(
+                        "v-tooltip",
+                        {
+                          attrs: { top: "" },
+                          scopedSlots: _vm._u(
+                            [
+                              {
+                                key: "activator",
+                                fn: function(ref) {
+                                  var on = ref.on
+                                  return [
+                                    _c(
+                                      "v-btn",
+                                      _vm._g(
+                                        {
+                                          attrs: {
+                                            color: "success",
+                                            elevation: "8",
+                                            small: "",
+                                            dark: "",
+                                            disabled: item.id < 0
+                                          },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.showModalEditar(item)
+                                            }
+                                          }
+                                        },
+                                        on
+                                      ),
+                                      [_c("v-icon", [_vm._v("mdi-pencil")])],
+                                      1
+                                    )
+                                  ]
+                                }
+                              }
+                            ],
+                            null,
+                            true
+                          )
+                        },
+                        [_vm._v(" "), _c("span", [_vm._v("Actualizar Datos")])]
+                      ),
+                      _vm._v(" "),
+                      item.nombre != "null"
+                        ? _c(
+                            "v-tooltip",
+                            {
+                              attrs: { top: "" },
+                              scopedSlots: _vm._u(
+                                [
+                                  {
+                                    key: "activator",
+                                    fn: function(ref) {
+                                      var on = ref.on
+                                      return [
+                                        _c(
+                                          "v-btn",
+                                          _vm._g(
+                                            {
+                                              staticClass: "mx-1",
+                                              attrs: {
+                                                color: "info",
+                                                elevation: "8",
+                                                small: "",
+                                                dark: "",
+                                                disabled: item.id < 0
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.deleteEmpresa(item)
+                                                }
+                                              }
+                                            },
+                                            on
+                                          ),
+                                          [
+                                            _c("v-icon", [_vm._v("mdi-delete")])
+                                          ],
+                                          1
+                                        )
+                                      ]
+                                    }
+                                  }
+                                ],
+                                null,
+                                true
+                              )
+                            },
+                            [
+                              _vm._v(" "),
+                              _c("span", [_vm._v("Eliminar Empresa")])
+                            ]
+                          )
+                        : _vm._e()
+                    ]
                   }
-                },
-                [_vm._v("\n      mdi-delete\n    ")]
-              )
-            ]
-          }
-        },
-        {
-          key: "no-data",
-          fn: function() {
-            return [
-              _c(
-                "v-btn",
-                { attrs: { color: "primary" }, on: { click: _vm.initialize } },
-                [_vm._v("Reset")]
-              )
-            ]
-          },
-          proxy: true
-        }
+                }
+              ])
+            })
+          ],
+          1
+        )
       ],
-      null,
-      true
+      1
     )
-  })
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
